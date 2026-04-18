@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 19th Birthday</title>
+    <style>
+        :root {
+            --primary-pink: #FFB6C1;
+            --bg-cream: #FFF5F7;
+            --accent-gold: #F7D794;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-cream);
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            color: #555;
+            overflow-x: hidden;
+        }
+
+        .section {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        .active {
+            display: flex;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary-pink), var(--accent-gold));
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.6);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+        .btn:hover { transform: scale(1.05); }
+
+        .heart-bg {
+            position: fixed;
+            color: var(--primary-pink);
+            font-size: 20px;
+            opacity: 0.5;
+            animation: floatUp linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title { color: #d87093; font-size: 28px; margin-bottom: 10px; }
+        .subtitle { font-size: 16px; color: #888; margin-bottom: 40px; }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 30px;
+        }
+        .opt-btn {
+            background: white;
+            color: var(--primary-pink);
+            border: 2px solid var(--primary-pink);
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .opt-btn:hover { background: var(--primary-pink); color: white; }
+
+        /* 神秘大礼盒样式 */
+        .mystery-box {
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+            margin: 20px 0;
+            border: 5px solid var(--accent-gold);
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .reasons-container {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            height: 60vh;
+            overflow-y: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(255, 182, 193, 0.3);
+            padding: 20px;
+            text-align: left;
+        }
+        .reason-item {
+            padding: 15px 10px;
+            border-bottom: 1px dashed var(--primary-pink);
+            color: #555;
+            animation: fadeIn 0.5s ease-out backwards;
+        }
+        .reasons-container::-webkit-scrollbar { width: 6px; }
+        .reasons-container::-webkit-scrollbar-thumb { background: var(--primary-pink); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="heart-container"></div>
+
+    <div id="home" class="section active">
+        <h1 class="title">祝宝宝十九岁生日快乐！🎉</h1>
+        <p class="subtitle">天天开心，每天都笑</p>
+        <button class="btn" onclick="startGame()">开启dsy专属惊喜</button>
+    </div>
+
+    <div id="game" class="section">
+        <h2 id="q-title" class="title">答题挑战</h2>
+        <div id="q-options" class="options-container"></div>
+    </div>
+
+    <div id="gift-notice" class="section">
+        <h1 class="title">🎊 恭喜通关！🎊</h1>
+        <p style="font-size: 18px; color: #555; margin-top: 20px;">
+            宝宝这是我给你准备的<span style="color: #d87093; font-weight: bold;">神秘礼物</span>！
+        </p>
+        <button class="btn" onclick="goToMysteryBox()">点我领取礼物</button>
+    </div>
+
+    <div id="prize" class="section">
+        <div class="mystery-box">🎁</div>
+        <h2 style="color: #d87093; margin-top: 10px;">神秘大礼</h2>
+        <p style="font-size: 18px; color: #777; font-weight: bold; margin: 15px 20px;">
+            礼物见面了再给你，现在不告诉你哈哈哈
+        </p>
+        <button class="btn" onclick="showReasons()">还有一个惊喜...</button>
+    </div>
+
+    <div id="reasons" class="section">
+        <h2 class="title" style="margin-bottom: 20px;">我喜欢你的100个理由 💖</h2>
+        <div id="reasons-list" class="reasons-container"></div>
+    </div>
+
+    <script>
+        function createHearts() {
+            const container = document.getElementById('heart-container');
+            for(let i=0; i<20; i++) {
+                let heart = document.createElement('div');
+                heart.className = 'heart-bg';
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 4 + 3) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        const questions = [
+            { q: "今天你几岁了？", options: ["A. 18岁", "B. 19岁", "C. 20岁"], ans: 1 },
+            { q: "我有多喜欢你？", options: ["A. 超级喜欢", "B. 超级超级喜欢", "C. 超级超级超级喜欢"], ans: 2 }
+        ];
+        
+        let currentQ = 0;
+
+        function startGame() {
+            currentQ = 0;
+            showSection('game');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            if(currentQ >= questions.length) {
+                // 答完跳到“获得礼物”过渡页
+                showSection('gift-notice');
+                return;
+            }
+            const q = questions[currentQ];
+            document.getElementById('q-title').innerText = q.q;
+            const optsContainer = document.getElementById('q-options');
+            optsContainer.innerHTML = '';
+            q.options.forEach((optText, index) => {
+                let btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.innerText = optText;
+                btn.onclick = () => {
+                    if(index === q.ans) { currentQ++; renderQuestion(); }
+                    else { alert("哎呀，选错啦！宝宝再仔细想想哦~ 🥺"); }
+                };
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        // 新增的点击过渡页按钮逻辑
+        function goToMysteryBox() {
+            showSection('prize');
+        }
+
+        const customReasons = [
+            "有全世界最可爱的眼睛", "看到你的脸就能什么烦恼都没有", "让我其实内心挺孤独的人感觉到被人关心", 
+            "可以和你说我的烦恼", "我难过的时候可以抱抱我", "给我木瓜膏", "帮我画大鹅", 
+            "经常夸我", "会陪我吃好吃的", "愿意忍着被蚊子咬也和我待在一起", "经常给我发特别美的自拍", 
+            "小学游泳比赛获奖了", "支持勇士队", "认识库里", "会关心我为什么难过", 
+            "给我拼豆", "陪我过生日", "从哪里看都很可爱", "生气的时候也可爱", 
+            "像个小兔子", "特别信任我", "会支持我的决定", "经常早睡早起", 
+            "会和我一起学习", "认真上课", "努力学习", "让我养成每个消息都回的好习惯", 
+            "是我的理想型", "感觉像一个发光的小兔子", "接纳我有时候很幼稚的一面", "接受我有时候的坏脾气", 
+            "不小心惹你生气了很快可以哄开心", "给我多多的手机壳", "关心我在干嘛", "无缘无故叫我一下", 
+            "有时候像小朋友一样", "特别大方不像有些女生很做作", "不会无理取闹", "会和我牵手", 
+            "一直都有新鲜感", "对我挺宽容的虽然我脾气很烂", "有事情会立马和我讲", "不化妆的样子全世界最美", 
+            "我生病不舒服会关心我", "分开的时候会给我视频", "一接通视频就看到你特别可爱", "会在视频的时候也和我亲亲", 
+            "会一起打着视频睡觉", "和我挺互补", "睡觉特别可爱", "爱吃杭州的面", 
+            "爱看剧", "有问题会马上和我沟通", "有话不憋着", "会记住我的很多小事", 
+            "记得我有哪些鞋子", "记得我的球衣号码", "记得我哪天在上哪节课", "记得我的小狗叫什么", 
+            "怕小猫", "不是特别怕老鼠", "会说想我了", "我听我说你不感兴趣的事", 
+            "特别有责任感", "偷偷放一个 可惜老是不让我拍你我一拍你就生气", "醒来会马上告诉我", "愿意陪我做以前没做过的事", 
+            "笑起来特别特别好看", "脸软软的", "耳朵软软的", "经常说我有香香的味道", 
+            "和我在海边散步", "让我离家这么远上学有了家人陪伴的感觉", "每次待在一起就很幸福", "和你在一起是上大学最大的收获之一", 
+            "你会体谅我也会表达爱", "会和我一样抽象", "待在一起不说话就感觉很棒", "一起吃鸡煲", 
+            "不让我讲赛里木", "给我看你小时候的照片", "告诉我你从小到大的故事", "和我讲你的家人朋友", 
+            "会询问我的意见", "走路到一半转头看到你就特别开心", "会凶巴巴的让我想剃胡子", "会逼我放弃斜刘海", 
+            "我帮你按摩", "会在我需要的时候出现", "听到你的语音都感觉很开心", "叫我宝宝", 
+            "我也叫你宝宝", "做事不怕麻烦", "积极向上", "我做错了会指出来", 
+            "讲道理", "我说自己不好的时候都会鼓励我", "我每天都说我喜欢你", "和我永远在一起", 
+            "我爱你宝宝"
+        ];
+
+        function showReasons() {
+            const list = document.getElementById('reasons-list');
+            list.innerHTML = ''; 
+            for(let i = 0; i < customReasons.length; i++) {
+                let div = document.createElement('div');
+                div.className = 'reason-item';
+                div.innerText = `${i + 1}. ${customReasons[i]}`;
+                div.style.animationDelay = `${Math.min(i * 0.08, 0.5)}s`; 
+                list.appendChild(div);
+            }
+            showSection('reasons');
+        }
+    </script>
+</body>
+</html>
